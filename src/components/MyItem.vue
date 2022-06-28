@@ -1,16 +1,26 @@
 <template>
     <li>
         <label>
-            <input type="checkbox"/>
-            <span>xx</span>
+            <input type="checkbox" :checked="todoObj.done" @change="handleCheck"/>
+            <span>{{todoObj.title}}</span>
         </label>
-        <button class="btn btn-danger" style="display:none">删除</button>
+        <button class="btn btn-danger" @click="handleDelete(todoObj.id)">删除</button>
     </li>
 </template>
 
 <script>
     export default {
-        name: 'MyItem'
+        name: 'MyItem',
+        props: ['todoObj', 'checkTodo', 'deleteTodo'],
+        methods: {
+            handleCheck() {
+                this.checkTodo(this.todoObj.id)
+            },
+            handleDelete(id) {
+                if(confirm('确定删除该项目？'))
+                this.deleteTodo(id)
+            }
+        }
     }
 </script>
 
@@ -42,11 +52,19 @@
         margin-top: 3px;
     }
 
+    li:hover button {
+        display: block;
+    }
+
     li:before {
         content: initial;
     }
 
     li:last-child {
         border-bottom: none;
+    }
+
+    li:hover {
+        background-color: #eee;
     }
 </style>
