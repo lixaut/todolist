@@ -9,7 +9,6 @@
 
     export default {
         name: 'MyHeader',
-        props: ['addTodo'],
         methods: {
             add(e) {
                 // 校验数据
@@ -17,7 +16,7 @@
                 // 生成添加数据
                 const todoObj = {id: nanoid(), title: e.target.value, done: false}
                 // 添加数据
-                this.addTodo(todoObj)
+                this.$emit('addTodo', todoObj)
                 // 输入框置空
                 e.target.value = ''
             }
