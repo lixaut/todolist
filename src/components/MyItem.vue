@@ -2,9 +2,17 @@
     <li>
         <label>
             <input type="checkbox" :checked="todoObj.done" @change="handleCheck"/>
-            <span>{{todoObj.title}}</span>
+            <span v-show="!todoObj.isEdit">{{todoObj.title}}</span>
+            <input 
+                v-show="todoObj.isEdit" 
+                type="text" 
+                :value="todoObj.title"
+                @blur="handleBlur(todoObj, $event)"
+                ref="inputTitle"
+            />
         </label>
         <button class="btn btn-danger" @click="handleDelete(todoObj.id)">删除</button>
+        <button v-show="!todoObj.isEdit" class="btn btn-edit" @click="handleEdit(todoObj)">编辑</button>
     </li>
 </template>
 
@@ -13,14 +21,33 @@
         name: 'MyItem',
         props: ['todoObj'],
         methods: {
+            // 勾选or取消勾选
             handleCheck() {
                 this.$bus.$emit('checkTodo', this.todoObj.id)
                 // this.checkTodo(this.todoObj.id)
             },
+            // 删除
             handleDelete(id) {
                 if(confirm('确定删除该项目？'))
                 this.$bus.$emit('deleteTodo', id)
                 // this.deleteTodo(id)
+            },
+            // 编辑
+            handleEdit(todoObj) {
+                if(todoObj.hasOwnProperty('idEdit')) {
+                    todoObj.isEdit = true
+                } else {
+                    this.$set(todoObj, 'isEdit', true)
+                }
+                this.$nextTick(function() {
+                    this.$refs.inputTitle.focus()
+                })
+            },
+            // 失去焦点回调（真正执行修改逻辑）
+            handleBlur(todo, e) {
+                this.todoObj.isEdit = false
+                if(!e.target.value.trim()) return alert('输入不能为空！！！')
+                this.$bus.$emit('updataTodo', todo.id, e.target.value)
             }
         }
     }
